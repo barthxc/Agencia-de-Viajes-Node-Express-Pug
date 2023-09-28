@@ -19,7 +19,8 @@ const port = process.env.PORT || 4000;
 // Habilitar PUG
 app.set('view engine', 'pug');
 
-
+// Configurar la ruta de las vistas
+app.set('views', path.join(__dirname, 'views'));
 
 // Obtener el año actual
 app.use((req,res,next)=>{
@@ -33,8 +34,9 @@ app.use((req,res,next)=>{
 // Agregar body parser para leer los datos del formulario
 app.use(express.urlencoded({ extended: true }));
 
-// Servir archivos estáticos desde la carpeta 'public'
-app.use(express.static(path.join(__dirname, 'public')));
+// Definir la carpeta public
+app.use(express.static('public'));
+
 // Agregar router
 app.use('/', router);
 
