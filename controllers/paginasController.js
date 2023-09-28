@@ -1,33 +1,35 @@
-import { Viaje } from '../models/Viaje.js';
-import { Testimonial } from '../models/Testimoniales.js';
+import Viaje from '../models/Viaje.js';
+import Testimonial from '../models/Testimoniales.js';
+import { testimonialSchema } from '../models/Testimoniales.js';
 
-const paginaInicio = async (req,res)=>{//req - Lo que enviamos : res- Lo que express no responde
 
-    //Consultar 3 viajes del modelo de Viaje
 
-    //Metemos en un array las peticiones al servidor y las llamamos de forma simultanea para pasarlo a la vista del resultado y su index
-    const promiseDB = [];
-    promiseDB.push(Viaje.findAll({limit:3}))
-    promiseDB.push(Testimonial.findAll({limit:3}))
-
+const paginaInicio = async (req, res) => {
     try {
-        const resultado = await Promise.all(promiseDB);
+        // Consultar 3 viajes desde la base de datos
+        const viajes = await Viaje.find().limit(3);
 
+        // Consultar 3 testimonios desde la base de datos
+        const testimoniales = await Testimonial.find().limit(3);
+
+        // Renderizar la vista 'inicio' con los resultados
         res.render('inicio', {
             pagina: 'Inicio',
-            clase:'home',
-            viajes:resultado [0],
-            testimoniales: resultado[1]
+            clase: 'home',
+            viajes: viajes,
+            testimoniales: testimoniales
         });
-        
+
     } catch (error) {
-    console.log(error);    
+        // Manejar errores si los hubiera
+        console.log(error);
+        res.status(500).send('Error interno del servidor');
     }
-
-
-
-  
 }
+
+
+
+
 
 const paginaNosotros = (req,res)=>{
     res.render('nosotros', {
@@ -36,45 +38,59 @@ const paginaNosotros = (req,res)=>{
 }
 
 
-const paginaViajes = async(req,res)=>{
-    //Consultar base de datos
-    const viajes = await Viaje.findAll();
-
-    
-    res.render('viajes', {
-        pagina: 'Próximos viajes!',
-        viajes
-    });
-}
-
-
-const paginaTestimoniales = async (req,res)=>{
-
+const paginaViajes = async (req, res) => {
     try {
-        const testimoniales = await Testimonial.findAll();
+        // Consultar la base de datos para obtener todos los viajes
+        const viajes = await Viaje.find();
 
-        res.render('testimoniales', {
-            pagina: 'Testimoniales',
-            testimoniales
+        // Renderizar la vista 'viajes' con los resultados
+        res.render('viajes', {
+            pagina: 'Próximos viajes!',
+            viajes: viajes
         });
+
     } catch (error) {
+        // Manejar errores si los hubiera
         console.log(error);
+        res.status(500).send('Error interno del servidor');
     }
 }
 
-//Muestra un viaje por su slug (página detalle)
-const paginaDetalleViaje = async (req,res) =>{
+
+
+const paginaTestimoniales = async (req, res) => {
+    try {
+        // Consultar la base de datos para obtener todos los testimonios
+        const testimoniales = await Testimonial.find();
+
+        // Renderizar la vista 'testimoniales' con los resultados
+        res.render('testimoniales', {
+            pagina: 'Testimoniales',
+            testimoniales: testimoniales
+        });
+    } catch (error) {
+        // Manejar errores si los hubiera
+        console.log(error);
+        res.status(500).send('Error interno del servidor');
+    }
+}
+
+const paginaDetalleViaje = async (req, res) => {
     const { slug } = req.params;
 
+    try {
+        // Consultar la base de datos para encontrar un viaje por su slug
+        const resultado = await Viaje.findOne({ slug: slug });
 
-    try{
-        const resultado = await Viaje.findOne({ where : {slug}});
-        res.render('viaje',{
-            pagina:'Información Viaje',
-            resultado
-        })
-    }catch(error){
-        console.log(error)
+        // Renderizar la vista 'viaje' con los resultados
+        res.render('viaje', {
+            pagina: 'Información Viaje',
+            resultado: resultado
+        });
+    } catch (error) {
+        // Manejar errores si los hubiera
+        console.log(error);
+        res.status(500).send('Error interno del servidor');
     }
 }
 

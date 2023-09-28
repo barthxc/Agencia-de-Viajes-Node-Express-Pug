@@ -1,58 +1,48 @@
-import {Testimonial} from '../models/Testimoniales.js'
-const guardarTestimonial = async (req,res) =>{
+import Testimonial from '../models/Testimoniales.js';
 
-    //Validar formulario
+const guardarTestimonial = async (req, res) => {
+    const { nombre, correo, mensaje } = req.body;
 
-    const {nombre, correo, mensaje} = req.body;
-    
     const errores = [];
 
-
-    if(nombre.trim() === ''){
-        errores.push({mensaje: 'El nombre está vacio'})
+    if (nombre.trim() === '') {
+        errores.push({ mensaje: 'El nombre está vacío' });
     }
 
-    if(correo.trim() === ''){
-        errores.push({mensaje: 'El correo está vacio'})
+    if (correo.trim() === '') {
+        errores.push({ mensaje: 'El correo está vacío' });
     }
 
-    if(mensaje.trim() === ''){
-        errores.push({mensaje: 'El mensaje está vacio'})
+    if (mensaje.trim() === '') {
+        errores.push({ mensaje: 'El mensaje está vacío' });
     }
 
-    if(errores.length>0){
+    if (errores.length > 0) {
+        const testimoniales = await Testimonial.find();
 
-        //Consultar Testimoniales existentes
-        const testimoniales = await Testimonial.findAll();
-
-        //Mostrar la vista con errores
-        res.render('testimoniales',{
-            pagina:'Testimoniales',
+        res.render('testimoniales', {
+            pagina: 'Testimoniales',
             errores,
             nombre,
             correo,
             mensaje,
             testimoniales
         });
-    }else{
-        //Almacenarlo en la base de datos
+    } else {
         try {
             await Testimonial.create({
                 nombre,
                 correo,
                 mensaje
-            })
+            });
             res.redirect('/testimoniales');
         } catch (error) {
-            console.log(error)
+            console.log(error);
+            res.status(500).send('Error interno del servidor');
         }
     }
-
-    
 }
 
-
-
-export {guardarTestimonial,
-
+export {
+    guardarTestimonial
 }
