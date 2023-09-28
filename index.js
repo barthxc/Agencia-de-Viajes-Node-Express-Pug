@@ -1,8 +1,14 @@
 import express from 'express';
 import router from './routes/index.js';
 import conectarDB from './config/db.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import path from 'path';
 
 const app = express();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Conectar a la base de datos
 conectarDB();
@@ -12,6 +18,9 @@ const port = process.env.PORT || 4000;
 
 // Habilitar PUG
 app.set('view engine', 'pug');
+
+// Configurar la ruta de las vistas
+app.set('views', path.join(__dirname, 'views'));
 
 // Obtener el año actual
 app.use((req,res,next)=>{
