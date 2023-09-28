@@ -35,7 +35,7 @@ app.use((req,res,next)=>{
 app.use(express.urlencoded({ extended: true }));
 
 // Definir la carpeta public
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 
 // Agregar router
 app.use('/', router);
